@@ -1,0 +1,8 @@
+This is AsteroPy v1.0.0
+
+To install, unzip it in a folder called "astero" (somewhere in your PYTHONPATH)
+and then do
+>>> import astero
+
+Note: this package depends on the *uncertainties* and *numpy* packages, so make 
+sure you have them installed beforehand.
