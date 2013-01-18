@@ -220,7 +220,8 @@ def ratio02 ( mx , mxErr, lag02=0, lag01=0, dnu_mean=0):
 
 	for n in range(0,Nn-1):
 		if (mx[n,0] != 0. and mx[n-1+lag02,2] != 0. and mx[n,1] != 0. and mx[n-1,1] != 0.
-	    and n-1 >= 0 and n-1+lag02 >= 0):
+	        and n-1 >= 0 and n-1+lag02 >= 0
+	        and (mx[n,1]-mx[n-1,1] < 1.5*dnu_mean)):
         		a = un.ufloat( (mx[n,0], mxErr[n,0]) )
         		b = un.ufloat( (mx[n-1+lag02,2], mxErr[n-1+lag02,2]) )
         		c = un.ufloat( (mx[n,1], mxErr[n,1]) )
