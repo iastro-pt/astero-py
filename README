@@ -4,5 +4,5 @@ To install, unzip it in a folder called "astero" (somewhere in your PYTHONPATH)
 and then do
 >>> import astero
 
-Note: this package depends on the *uncertainties* and *numpy* packages, so make 
-sure you have them installed beforehand.
+Note: this package depends on the *matplotlib*, *numpy*, *scipy* and
+*uncertainties* packages, so make sure you have them installed beforehand.

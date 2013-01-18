@@ -49,7 +49,7 @@ def small_sep02 ( mx , mxErr, lag=0):
 	d02    = np.zeros((1,Nn))
 	d02Err = np.zeros((1,Nn))
 	d02.fill(None)      # values that can't be calculated are NaN
-	d02Err.fill(None)
+
 	
 	for n in range(1-lag,Nn):
 		if (mx[n,0] != 0. and mx[n-1+lag,2] != 0.):
@@ -82,7 +82,6 @@ def small_sep13 ( mx , mxErr, lag=0):
 	d13    = np.zeros((1,Nn))
 	d13Err = np.zeros((1,Nn))
 	d13.fill(None)      # values that can't be calculated remain NaN
-	d13Err.fill(None)
 
 	for n in range(1-lag,Nn):
 		if (mx[n,1] != 0. and mx[n-1+lag,3] != 0.):     
@@ -112,7 +111,6 @@ def sep01_3(mx, mxErr, lag=0):
 	d01    = np.zeros((1,Nn))
 	d01Err = np.zeros((1,Nn))
 	d01.fill(None)      # values that can't be calculated are NaN
-	d01Err.fill(None)
 
 	for n in range(0,Nn-lag):
 		if (mx[n,0] != 0. and mx[n-1+lag,1] != 0. and mx[n+lag,1] != 0. and (n-1+lag) >= 0):
@@ -145,7 +143,6 @@ def sep10_3(mx, mxErr, lag=0):
 	d10    = np.zeros((1,Nn-1))
 	d10Err = np.zeros((1,Nn-1))
 	d10.fill(None)      # values that can't be calculated are NaN
-	d10Err.fill(None)
 
 	for n in range(0,Nn-1):
 		if (mx[n+lag,1] != 0. and mx[n,0] != 0. and mx[n+1,0] != 0.):      
@@ -210,7 +207,7 @@ def sep10_3(mx, mxErr, lag=0):
 #                |   n,0      n-1,2 | /  |   n,1     n-1,1 |
 #
 ###############################################################################
-def ratio02 ( mx , mxErr, lag=0):
+def ratio02 ( mx , mxErr, lag02=0, lag01=0):
 	""" 
 	Given a frequency matrix and errors calculates the ratio r02
 	and propagates errors.
@@ -220,17 +217,17 @@ def ratio02 ( mx , mxErr, lag=0):
 	r02    = np.zeros((1,Nn-1))
 	r02Err = np.zeros((1,Nn-1))
 	r02.fill(None)      # values that can't be calculated are NaN
-	r02Err.fill(None)
 
-	for n in range(1,Nn):
-		if (mx[n,0] != 0. and mx[n-1+lag,2] != 0. and mx[n,1] != 0. and mx[n-1,1] != 0.):
+	for n in range(0,Nn-1):
+		if (mx[n,0] != 0. and mx[n-1+lag02,2] != 0. and mx[n,1] != 0. and mx[n-1,1] != 0.
+	    and n-1 >= 0 and n-1+lag02 >= 0):
         		a = un.ufloat( (mx[n,0], mxErr[n,0]) )
-        		b = un.ufloat( (mx[n-1+lag,2], mxErr[n-1+lag,2]) )
+        		b = un.ufloat( (mx[n-1+lag02,2], mxErr[n-1+lag02,2]) )
         		c = un.ufloat( (mx[n,1], mxErr[n,1]) )
         		d = un.ufloat( (mx[n-1,1], mxErr[n-1,1]) )
         		result = (a-b) / (6.*(c-d))
-        		r02[0,n-1]    = un.nominal_values(result)
-        		r02Err[0,n-1] = un.std_dev(result)
+        		r02[0,n]    = un.nominal_values(result)
+        		r02Err[0,n] = un.std_dev(result)
 
 	return r02, r02Err
 
@@ -252,7 +249,6 @@ def ratio13 ( mx, mxErr, lag=0):
 	r13    = np.zeros((1,Nn-1))
 	r13Err = np.zeros((1,Nn-1))
 	r13.fill(None)      # values that can't be calculated are NaN
-	r13Err.fill(None)
 
 	for n in range(0,Nn-1):
 		if (mx[n,1] and mx[n-1+lag,3] and mx[n+1,0] and mx[n,0]):     
@@ -288,7 +284,6 @@ def ratio01 ( mx, mxErr, lag=0 ):
 	r01    = np.zeros((1,Nn))
 	r01Err = np.zeros((1,Nn))
 	r01.fill(None)      # values that can't be calculated are NaN
-	r01Err.fill(None)
 
 	for n in range(0,Nn-lag):
 		if (mx[n,0] and mx[n-1+lag,1] and mx[n+lag,1] and (n-1+lag) >= 0):
@@ -324,11 +319,10 @@ def ratio10 ( mx, mxErr, lag=0):
 	r10    = np.zeros((1,Nn-1))
 	r10Err = np.zeros((1,Nn-1))
 	r10.fill(None)      # values that can't be calculated are NaN
-	r10Err.fill(None)
 	
 	for n in range(0,Nn-1):
 		if (mx[n+lag,1] and mx[n,0] and mx[n+1,0]):
-			print mx[n,0], mx[n+1,0], mx[n+lag,1], mx[n+1,0], mx[n,0]
+			#print mx[n,0], mx[n+1,0], mx[n+lag,1], mx[n+1,0], mx[n,0]
 			a = un.ufloat( (mx[n+lag,1], mxErr[n+lag,1]) )
 			b = un.ufloat( (mx[n,0], mxErr[n,0]) )
 			c = un.ufloat( (mx[n+1,0], mxErr[n+1,0]) )

@@ -91,13 +91,15 @@ class _astero:
 
         from linfit import linfit
 
-        f = self.mx[:, 0]   # l=0 frequencies
+        f = self.mx[:,0]   # l=0 frequencies
+        f = f[f != 0]   # only non-zero ones
         err = self.mxErr[:,0]   # l=0 frequency errors
+        err = err[err != 0]
         try:
             n = self.nvector[:len(f)]
         except AttributeError:
             print 'There is no information on the radial orders of the frequencies\n'
-            print 'Fit is nonetheless made assuming evenly-spaced values'
+            print 'Fit is made assuming consecutive values'
             n = range(1,len(f)+1)
 
         if(use_errors): a, dnu, dic = linfit(n, f, err=err, use_err=True, full_output=True, plot=plot)
@@ -151,7 +153,7 @@ class _astero:
     ##
     def ratios(self, lag02=0, lag13=0, lag01=0):
         import separations as diff
-        self.r02, self.r02Err = diff.ratio02(self.mx, self.mxErr, lag=lag02)
+        self.r02, self.r02Err = diff.ratio02(self.mx, self.mxErr, lag02=lag02)
         self.r02 = self.r02[0];	self.r02Err = self.r02Err[0]
         try:
             self.r13, self.r13Err = diff.ratio13(self.mx, self.mxErr, lag=lag13)
@@ -204,9 +206,11 @@ class _astero:
 	##
 	## Plot the (scaled) small separations as a function of frequency
 	##
-    def plotss(self, xlim=[None,None], ylim=[None,None], fig=1):
+    def plotss(self, xlim=[None,None], ylim=[None,None], fig=1, only='all'):
 
+        oplot = False
         if (fignum_exists(fig)):
+            oplot = True
             symbols = ['d', '+', '*']
             index = np.random.randint(0,len(symbols))
             symbol = symbols[index]
@@ -216,11 +220,25 @@ class _astero:
         fig = figure(fig)
         ax = subplot(111)
         
-        ax.errorbar(self.mx[:,0],self.d02, yerr=self.d02Err, fmt='r-'+symbol)
-        ax.errorbar(self.mx[:,1],self.d13, yerr=self.d13Err, fmt='b-'+symbol)
-        ax.errorbar(self.mx[:,0],self.d01, yerr=self.d01Err, fmt='g-'+symbol)
-        ax.errorbar(self.mx[0:-1,1],self.d10, yerr=self.d10Err, fmt='k-'+symbol)
-        leg = ax.legend((r'$d_{02}/3$',r'$d_{13}/5$',r'$d_{01}$',r'$d_{10}$'), 'upper right')
+        if (only == 'all'):
+		    ax.errorbar(self.mx[:,0],self.d02, yerr=self.d02Err, fmt='r-'+symbol)
+		    ax.errorbar(self.mx[:,1],self.d13, yerr=self.d13Err, fmt='b-'+symbol)
+		    ax.errorbar(self.mx[:,0],self.d01, yerr=self.d01Err, fmt='g-'+symbol)
+		    ax.errorbar(self.mx[0:-1,1],self.d10, yerr=self.d10Err, fmt='k-'+symbol)
+		    leg = ax.legend((r'$d_{02}/3$',r'$d_{13}/5$',r'$d_{01}$',r'$d_{10}$'), 'upper right')
+        elif (only == 'd02'):
+            ax.errorbar(self.mx[:,0],self.d02, yerr=self.d02Err, fmt='r-'+symbol)
+            leg = ax.legend('d02 / 3', 'upper right')
+        elif(only == 'd13'):
+            ax.errorbar(self.mx[:,1],self.d13, yerr=self.d13Err, fmt='b-'+symbol)
+            leg = ax.legend('d13 / 5', 'upper right')
+        elif(only == 'd010'):
+            mfc = 'orange' if oplot else None
+            ms = 2 if oplot else None
+            ax.errorbar(self.mx[:,0],self.d01, yerr=self.d01Err, fmt='g'+symbol, mfc=mfc)
+            ax.errorbar(self.mx[0:-1,1],self.d10, yerr=self.d10Err, fmt='k'+symbol, mfc=mfc)
+            leg = ax.legend((r'$d_{01}$',r'$d_{10}$'), 'upper right')
+        
         ax.grid(False)
         ax.set_xlabel('Frequency')
         ax.set_ylabel(r'$d \, (\mu Hz)$')
@@ -228,21 +246,44 @@ class _astero:
         ax.set_title(r'Small Separations')
         ax.set_ylim(ylim)
         ax.set_xlim(xlim)
-        plt.show()
-
+        plt.show()	
 
 	##
 	## Plot the ratios as a function of frequency
 	##
-    def plotr(self, xlim=[None,None], ylim=[None,None], fig=1):
+    def plotr(self, xlim=[None,None], ylim=[None,None], fig=1, only='all'):
 
+        oplot = False
+        if (fignum_exists(fig)):
+            oplot = True
+            symbols = ['d', '+', '*']
+            index = np.random.randint(0,len(symbols))
+            symbol = symbols[index]
+        else:
+            symbol = 'o'
+            
         fig = figure(fig)
         ax = subplot(111)
-        ax.errorbar(self.mx[0:-1,0],self.r02, yerr=self.r02Err, fmt='r-o')
-        ax.errorbar(self.mx[0:-1,1],self.r13, yerr=self.r13Err, fmt='b-o')
-        ax.errorbar(self.mx[:,0],self.r01, yerr=self.r01Err, fmt='g-o') # 
-        ax.errorbar(self.mx[0:-1,1],self.r10, yerr=self.r10Err, fmt='k-o') # 
-        leg = ax.legend((r'$r_{02}$',r'$r_{13}$',r'$r_{01}$',r'$r_{10}$'))
+        
+        if (only == 'all'):
+            ax.errorbar(self.mx[0:-1,0],self.r02, yerr=self.r02Err, fmt='r-'+symbol)
+            ax.errorbar(self.mx[0:-1,1],self.r13, yerr=self.r13Err, fmt='b-'+symbol)
+            ax.errorbar(self.mx[:,0],self.r01, yerr=self.r01Err, fmt='g-'+symbol) 
+            ax.errorbar(self.mx[0:-1,1],self.r10, yerr=self.r10Err, fmt='k-'+symbol) 
+            leg = ax.legend((r'$r_{02}$',r'$r_{13}$',r'$r_{01}$',r'$r_{10}$'))
+        elif (only == 'r02'):
+            ax.errorbar(self.mx[0:-1,0],self.r02, yerr=self.r02Err, fmt='r-'+symbol)
+            leg = ax.legend((r'$r_{02}$',r'$r_{13}$',r'$r_{01}$',r'$r_{10}$'))
+        elif(only == 'r13'):
+            ax.errorbar(self.mx[0:-1,1],self.r13, yerr=self.r13Err, fmt='b-'+symbol)
+            leg = ax.legend((r'$r_{02}$',r'$r_{13}$',r'$r_{01}$',r'$r_{10}$'))
+        elif(only == 'r010'):
+            mfc = 'orange' if oplot else None
+            ms = 2 if oplot else None
+            ax.errorbar(self.mx[:,0],self.r01, yerr=self.r01Err, fmt='g'+symbol, mfc=mfc)
+            ax.errorbar(self.mx[0:-1,1],self.r10, yerr=self.r10Err, fmt='k'+symbol, mfc=mfc)
+            leg = ax.legend((r'$r_{02}$',r'$r_{13}$',r'$r_{01}$',r'$r_{10}$'))
+            
         ax.grid(False)
         ax.set_xlabel('Frequency')
         ax.set_ylabel('ratio')
@@ -254,7 +295,7 @@ class _astero:
 
 
 	##
-	## Plot the dr as a function of frequency
+	## Plot the dr as a function of frequency (stub!)
 	##
 	def plotdr(self, xlim=[None,None], ylim=[None,None]):
 		if (self.type == 'm'):
@@ -297,7 +338,7 @@ class _astero:
 
 
 	##
-	## Plot the second differences as a function of frequency
+	## Plot the second differences as a function of frequency (stub!)
 	##
 	def plotsd(self, xlim=[None,None], ylim=[None,None]):
 		
@@ -339,7 +380,7 @@ class _astero:
 			plt.show()	
 
 	##
-	## Relative differences to observations
+	## Relative differences to observations (stub!)
 	##
 	def relative (self, obs, plot=True, xlim=[None,None], ylim=[None,None]):
 
@@ -426,9 +467,41 @@ class _astero:
         minorticks_on()
         show()
 
-
+    
+    ##
+    ## Output frequencies to MESA inlist form
+    ##
+    def mesa_create_inlist(self, max_error=None):
+    
+        print 'nl0 = ' + str( (self.mx[:,0] != 0.).sum() )
+        for i in range(len(self.mx[:,0])):
+            if (self.mx[i,0] != 0):
+                print 'l0_obs(' + str(i+1) + ') = ' + str(self.mx[i,0]) + 'd0'
+                print 'l0_obs_sigma(' + str(i+1) + ') = ' + str(self.mxErr[i,0]) + 'd0'
         
+        print '\n'
         
+        print 'nl1 = ' + str( (self.mx[:,1] != 0.).sum() )
+        for i in range(len(self.mx[:,1])):
+            if (self.mx[i,1] != 0):
+                print 'l1_obs(' + str(i+1) + ') = ' + str(self.mx[i,1]) + 'd0'
+                print 'l1_obs_sigma(' + str(i+1) + ') = ' + str(self.mxErr[i,1]) + 'd0'
+        
+        print '\n'
+        
+        print 'nl2 = ' + str( (self.mx[:,2] != 0.).sum() )
+        for i in range(len(self.mx[:,2])):
+            if (self.mx[i,2] != 0):
+                print 'l2_obs(' + str(i+1) + ') = ' + str(self.mx[i,2]) + 'd0'
+                print 'l2_obs_sigma(' + str(i+1) + ') = ' + str(self.mxErr[i,2]) + 'd0'
+    
+        print '\n'
+        
+        print 'nl3 = ' + str( (self.mx[:,3] != 0.).sum() )
+        for i in range(len(self.mx[:,3])):
+            if (self.mx[i,3] != 0):
+                print 'l3_obs(' + str(i+1) + ') = ' + str(self.mx[i,3]) + 'd0'
+                print 'l3_obs_sigma(' + str(i+1) + ') = ' + str(self.mxErr[i,3]) + 'd0'
 
 
 
