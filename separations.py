@@ -207,7 +207,7 @@ def sep10_3(mx, mxErr, lag=0):
 #                |   n,0      n-1,2 | /  |   n,1     n-1,1 |
 #
 ###############################################################################
-def ratio02 ( mx , mxErr, lag02=0, lag01=0):
+def ratio02 ( mx , mxErr, lag02=0, lag01=0, dnu_mean=0):
 	""" 
 	Given a frequency matrix and errors calculates the ratio r02
 	and propagates errors.
@@ -239,7 +239,7 @@ def ratio02 ( mx , mxErr, lag02=0, lag01=0):
 # r13 = d13/D0 = | nu    -  nu      |  / | nu      - nu    |
 #                |   n,1      n-1,3 | /  |   n+1,0     n,0 |
 ###############################################################################
-def ratio13 ( mx, mxErr, lag=0):
+def ratio13 ( mx, mxErr, lag=0, dnu_mean=0):
 	""" 
 	Given a frequency matrix and errors calculates the ratio r13
 	and propagates errors.

@@ -81,7 +81,7 @@ class _astero:
     ## Calculate delta_nu
     ## (based on method of White et al. 2011)
     ##
-    def delta_nu(self, use_errors=False, plot=False):
+    def delta_nu(self, use_errors=False, plot=False, quiet=False):
         """
         To obtain delta_nu and epsilon, we perform a leastsquares fit to the
         radial (l = 0) frequencies as a function of n. 
@@ -105,9 +105,10 @@ class _astero:
         if(use_errors): a, dnu, dic = linfit(n, f, err=err, use_err=True, full_output=True, plot=plot)
         else: a, dnu, dic = linfit(n,f,full_output=True, plot=plot)
 
-        print 'Fit statistics (nu = a + b*n):'
-        print '   b (=dnu) = ' + str(dnu) + ' +/- ' + str(dic['SEb'])
-        print '   R^2 = ' + str(dic['r2'])
+        if (not quiet):
+            print 'Fit statistics (nu = a + b*n):'
+            print '   b (=dnu) = ' + str(dnu) + ' +/- ' + str(dic['SEb'])
+            print '   R^2 = ' + str(dic['r2'])
         self.dnu = dnu
 
 
@@ -153,10 +154,17 @@ class _astero:
     ##
     def ratios(self, lag02=0, lag13=0, lag01=0):
         import separations as diff
-        self.r02, self.r02Err = diff.ratio02(self.mx, self.mxErr, lag02=lag02)
+        
+        try:
+            dnu = self.dnu
+        except AttributeError:
+            self.delta_nu(quiet=True)
+            dnu = self.dnu
+        
+        self.r02, self.r02Err = diff.ratio02(self.mx, self.mxErr, lag02=lag02, dnu_mean=dnu)
         self.r02 = self.r02[0];	self.r02Err = self.r02Err[0]
         try:
-            self.r13, self.r13Err = diff.ratio13(self.mx, self.mxErr, lag=lag13)
+            self.r13, self.r13Err = diff.ratio13(self.mx, self.mxErr, lag=lag13, dnu_mean=dnu)
             self.r13 = self.r13[0];	self.r13Err = self.r13Err[0]
         except (IndexError):
             print 'r13 can''t be calculated'
