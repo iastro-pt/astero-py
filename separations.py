@@ -251,7 +251,8 @@ def ratio13 ( mx, mxErr, lag=0, dnu_mean=0):
 	r13.fill(None)      # values that can't be calculated are NaN
 
 	for n in range(0,Nn-1):
-		if (mx[n,1] and mx[n-1+lag,3] and mx[n+1,0] and mx[n,0]):     
+		if (mx[n,1] and mx[n-1+lag,3] and mx[n+1,0] and mx[n,0]
+		    and (mx[n+1,0]-mx[n,0] < 1.5*dnu_mean) ):     
         		a = un.ufloat( (mx[n,1], mxErr[n,1]) )
         		b = un.ufloat( (mx[n-1+lag,3], mxErr[n-1+lag,3]) )
         		c = un.ufloat( (mx[n+1,0], mxErr[n+1,0]) )
