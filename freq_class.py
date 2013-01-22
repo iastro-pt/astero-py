@@ -180,8 +180,15 @@ class _astero:
     ## Calculate the second differences
     ##
     def sec_dif(self):
-        import separations as diff
-        self.D2, self.D2Err = diff.second_dif(self.mx, self.mxErr)
+    	import separations as diff
+    	
+    	try:
+            dnu = self.dnu
+        except AttributeError:
+            self.delta_nu(quiet=True)
+            dnu = self.dnu 
+        
+        self.D2, self.D2Err = diff.second_dif(self.mx, self.mxErr, dnu_mean=dnu)
         #print 'Second differences done'
 
 

@@ -346,25 +346,60 @@ def ratio10 ( mx, mxErr, lag=0):
 #         n-1,l      n,l     n+1,l
 #
 ############################################################
-def second_dif( mx, mxErr ):
+def second_dif( mx, mxErr, dnu_mean=0):
 	""" given a frequency matrix 'mx', calculates the second differences """
 	
 	(Nn, Nl) = np.shape(mx)
 	D2    = np.zeros((Nn-1,Nl))
 	D2Err = np.zeros((Nn-1,Nl))
+	D2.fill(None)      # values that can't be calculated are NaN
 
 	# second differences for l=(0,1,2,...Nl)
 	for l in range(Nl):
 		for n in range(1,Nn-1):
-			a = un.ufloat( (mx[n-1,l], mxErr[n-1,l]) )
-			b = un.ufloat( (mx[n,l], mxErr[n,l]) )
-			c = un.ufloat( (mx[n+1,l], mxErr[n+1,l]) )
+			if (mx[n+1,l]-mx[n,l] < 1.5*dnu_mean):
+			# only calculate when modes have consecutive orders, in which case
+			# their difference will be close to the mean small separation
+				a = un.ufloat( (mx[n-1,l], mxErr[n-1,l]) )
+				b = un.ufloat( (mx[n,l], mxErr[n,l]) )
+				c = un.ufloat( (mx[n+1,l], mxErr[n+1,l]) )
 
-			result = a - 2*b + c
-			D2[n-1,l]    = un.nominal_value(result)
-			D2Err[n-1,l] = un.std_dev(result)			
+				result = a - 2*b + c
+				D2[n-1,l]    = un.nominal_value(result)
+				D2Err[n-1,l] = un.std_dev(result)			
 
 	return D2, D2Err
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
