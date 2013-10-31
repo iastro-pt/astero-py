@@ -7,7 +7,7 @@ import numpy as np
 #	... ...  ...        ...
 #
 ###############################################################################
-def readModel( filename ):
+def readModel( filename, debug=False ):
 	""" 
 	Reads frequencies from 'filename' and returns frequency matrix.
 	Type of file:
@@ -28,12 +28,15 @@ def readModel( filename ):
 	mx_corr = np.zeros(mx_corr)
 
 	# how many n for each l?
-	ind = ind=np.zeros((1,4))[0]
+	ind = np.zeros((1,4))[0]
 	ind[0] = sum(l==0)
 	ind[1] = sum(l==1)
 	ind[2] = sum(l==2)
 	ind[3] = sum(l==3)
 	# vector 'ind' contains the number of radial orders n for each l
+	if debug:
+		print ind 
+		print l
 
 	# for each l (each column) populate the matrix with 
 	# as many n as there are

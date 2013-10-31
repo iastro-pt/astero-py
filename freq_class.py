@@ -462,11 +462,17 @@ class _astero:
                     xerr=self.mxErr[:,1],fmt=color +'o', mfc=face, ms=6)
         l2,cl,bl = errorbar(nuMODdnu[:,2], self.mx[:,2], 
                     xerr=self.mxErr[:,2],fmt=color +'d', mfc=face, ms=7,capsize=2)
-        l3,cl,bl = errorbar(nuMODdnu[:,3], self.mx[:,3], 
+        try:
+            l3,cl,bl = errorbar(nuMODdnu[:,3], self.mx[:,3], 
                     xerr=self.mxErr[:,3],fmt=color +'s', mfc=face, ms=6,capsize=3)
-
-        ax.legend((r'$\ell=0$', r'$\ell=1$', r'$\ell=2$', r'$\ell=3$'),
+            ax.legend((r'$\ell=0$', r'$\ell=1$', r'$\ell=2$', r'$\ell=3$'),
                   frameon=False, numpoints=1)
+        except IndexError:
+            ax.legend((r'$\ell=0$', r'$\ell=1$', r'$\ell=2$'),
+                  frameon=False, numpoints=1)
+            
+        
+        
         ax.set_xlabel(r'$\nu$  ' + 'mod' + r' $\Delta\nu \, (\mu Hz)$',
                       fontsize=20, labelpad=15)
         ax.set_ylabel(r'$\nu \, (\mu Hz)$', fontsize=20, labelpad=15)
