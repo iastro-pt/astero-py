@@ -455,16 +455,24 @@ class _astero:
         figure(fig)
         ax = subplot(111)
         nuMODdnu = self.mx % (dnu - nu0)
-        
-        l0,cl,bl = errorbar(nuMODdnu[:,0], self.mx[:,0], 
-                    xerr=self.mxErr[:,0], fmt=color +'*', ms=8, capsize=2)
-        l1,cl,bl = errorbar(nuMODdnu[:,1], self.mx[:,1], 
-                    xerr=self.mxErr[:,1],fmt=color +'o', mfc=face, ms=6)
-        l2,cl,bl = errorbar(nuMODdnu[:,2], self.mx[:,2], 
-                    xerr=self.mxErr[:,2],fmt=color +'d', mfc=face, ms=7,capsize=2)
+        idx0 = self.mx[:,0] != 0.
+        idx1 = self.mx[:,1] != 0.
+        idx2 = self.mx[:,2] != 0.
         try:
-            l3,cl,bl = errorbar(nuMODdnu[:,3], self.mx[:,3], 
-                    xerr=self.mxErr[:,3],fmt=color +'s', mfc=face, ms=6,capsize=3)
+            idx3 = self.mx[:,3] != 0.
+        except IndexError:
+            pass
+        print idx3
+
+        l0,cl,bl = errorbar(nuMODdnu[idx0,0], self.mx[idx0,0], 
+                    xerr=self.mxErr[idx0,0], fmt=color +'*', ms=8, capsize=2)
+        l1,cl,bl = errorbar(nuMODdnu[idx1,1], self.mx[idx1,1], 
+                    xerr=self.mxErr[idx1,1],fmt=color +'o', mfc=face, ms=6)
+        l2,cl,bl = errorbar(nuMODdnu[idx2,2], self.mx[idx2,2], 
+                    xerr=self.mxErr[idx2,2],fmt=color +'d', mfc=face, ms=7,capsize=2)
+        try:
+            l3,cl,bl = errorbar(nuMODdnu[idx3,3], self.mx[idx3,3], 
+                    xerr=self.mxErr[idx3,3],fmt=color +'s', mfc=face, ms=6,capsize=3)
             ax.legend((r'$\ell=0$', r'$\ell=1$', r'$\ell=2$', r'$\ell=3$'),
                   frameon=False, numpoints=1)
         except IndexError:
