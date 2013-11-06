@@ -6,3 +6,8 @@ and then do
 
 Note: this package depends on the *matplotlib*, *numpy*, *scipy* and
 *uncertainties* packages, so make sure you have them installed beforehand.
+
+http://matplotlib.org/
+http://www.numpy.org/
+http://www.scipy.org/
+http://pythonhosted.org/uncertainties/
