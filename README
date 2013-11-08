@@ -11,3 +11,34 @@ http://matplotlib.org/
 http://www.numpy.org/
 http://www.scipy.org/
 http://pythonhosted.org/uncertainties/
+
+
+
+Usage:
+
+To read frequencies from a file with a format like
+    l   n   nu  err
+    ... ... ... ...
+
+do the following
+
+>>> sun = astero.load('filename.txt', 5, name='Sun')
+
+The number 5 is a tag that specifies the format of the file. There are other
+possibilities, see help for the astero.load function.
+
+Then we can start working with the 'sun' object.
+
+sun.mx  -> frequency 'matrix' with every n for l=0,1,2,3
+sun.delta_nu()  -> calculate Delta_nu by fit to radial modes
+sun.dnu  -> value of Delta_nu
+sun.echelle()  -> plot the echelle diagram
+
+sun.large_sep()
+sun.small_sep()
+...
+
+
+
+
+
